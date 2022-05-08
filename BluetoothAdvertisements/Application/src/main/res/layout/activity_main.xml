@@ -23,17 +23,17 @@
 
     <FrameLayout
         android:id="@+id/scanner_fragment_container"
-        android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_height="0px" >
+        android:layout_height="0px"
+        android:layout_weight="1">
 
-            <TextView
-                android:id="@+id/error_textview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:freezesText="true" />
+        <TextView
+            android:id="@+id/error_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:freezesText="true" />
 
-        </FrameLayout>
+    </FrameLayout>
 
     <FrameLayout
         android:id="@+id/advertiser_fragment_container"

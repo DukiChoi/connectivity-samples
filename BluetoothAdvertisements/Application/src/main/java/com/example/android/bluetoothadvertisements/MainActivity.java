@@ -16,28 +16,53 @@
 
 package com.example.android.bluetoothadvertisements;
 
+import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
+
 
 /**
  * Setup display fragments and ensure the device supports Bluetooth.
  */
 public class MainActivity extends FragmentActivity {
-
+    private String[] PERMISSIONS = {Manifest.permission.BLUETOOTH_ADMIN, Manifest.permission.FOREGROUND_SERVICE, Manifest.permission.BLUETOOTH_PRIVILEGED, Manifest.permission.FOREGROUND_SERVICE};
     private BluetoothAdapter mBluetoothAdapter;
+    private static final int MULTIPLE_PERMISSION = 1004;
+
+
+    public boolean runtimeCheckPermission(Context context, String... permissions) {
+        if (context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+
+                }
+            }
+        }
+        return true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setTitle(R.string.activity_main_title);
+
+        if (!runtimeCheckPermission(this, PERMISSIONS)) {
+            ActivityCompat.requestPermissions(this, PERMISSIONS, MULTIPLE_PERMISSION);
+        } else {
+            Log.i("권한 테스트", "권한이 있네요");
+        }
 
         if (savedInstanceState == null) {
 

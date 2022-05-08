@@ -38,6 +38,7 @@ public class AdvertiserFragment extends Fragment implements View.OnClickListener
      * Lets user toggle BLE Advertising.
      */
     private Switch mSwitch;
+    AdvertiserService advertiserService;
 
     /**
      * Listens for notifications that the {@code AdvertiserService} has failed to start advertising.
@@ -49,7 +50,6 @@ public class AdvertiserFragment extends Fragment implements View.OnClickListener
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         advertisingFailureReceiver = new BroadcastReceiver() {
 
             /**

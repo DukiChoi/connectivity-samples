@@ -1,6 +1,8 @@
 package com.example.android.bluetoothadvertisements;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
@@ -11,8 +13,10 @@ import android.bluetooth.le.AdvertiseSettings;
 import android.bluetooth.le.BluetoothLeAdvertiser;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -52,6 +56,7 @@ public class AdvertiserService extends Service {
 
     private Runnable timeoutRunnable;
 
+    final String CHANNEL_ID = "notification_channel";
     /**
      * Length of time to allow advertising before automatically shutting off. (10 minutes)
      */
@@ -152,18 +157,38 @@ public class AdvertiserService extends Service {
      * Callers should call stopForeground(true) when background work is complete.
      */
     private void goForeground() {
+
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
             notificationIntent, 0);
-        Notification n = new Notification.Builder(this)
+        createNotificationChannel();
+        //이거 먼저 해줘야함.
+        Notification n = new NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Advertising device via Bluetooth")
             .setContentText("This device is discoverable to others nearby.")
             .setSmallIcon(R.drawable.ic_launcher)
             .setContentIntent(pendingIntent)
             .build();
-        startForeground(FOREGROUND_NOTIFICATION_ID, n);
-    }
 
+        startForeground(FOREGROUND_NOTIFICATION_ID, n);
+
+
+    }
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "channel_name";
+            String description = "channel_description";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
     /**
      * Stops BLE Advertising.
      */
